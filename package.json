@@ -1,0 +1,22 @@
+{
+  "name": "flappy",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "watch": "nodemon --ext *"
+  },
+  "type": "module",
+  "author": "",
+  "license": "ISC",
+  "homepage": "https://github.com/MikolaGil/flappy#readme",
+  "dependencies": {
+    "express": "^4.17.3"
+  },
+  "devDependencies": {
+    "connect-livereload": "^0.6.1",
+    "livereload": "^0.9.3",
+    "nodemon": "^2.0.15"
+  }
+}
