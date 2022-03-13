@@ -39,10 +39,6 @@ body{
 }
 
 .pipe{
-    --pipe-width: 120;
-    --pipe-left: 100;
-    --hole-top: 500;
-    --hole-height: 120;
     position: absolute;
     top:0;
     bottom:0;
@@ -53,7 +49,7 @@ body{
 .pipe > .segment{
     position: absolute;
     width: 100%;
-    background-color: grey;
+    background-color: hsl(100, 75%, 50%);
 }
 
 .pipe > .top{

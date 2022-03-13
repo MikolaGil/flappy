@@ -1,20 +1,48 @@
-const HOLE_HEIGHT = 120;
+const HOLE_HEIGHT = 150;
+const PIPE_WIDTH = 80;
 const PIPE_INTERVAL = 1500;
-const pipes = [];
-const timeSinceLastPipe = 0;
+let pipes = [];
+let timeSinceLastPipe;
 const PIPE_SPEED = 0.75;
+let passedPipeCount;
+
+export function setupPipes(){
+    document.documentElement.style.setProperty('--pipe-width', PIPE_WIDTH);
+    document.documentElement.style.setProperty('--hole-height', HOLE_HEIGHT);
+
+    pipes.forEach(pipe =>{
+        pipe.remove();
+    });
+
+    timeSinceLastPipe = PIPE_INTERVAL;
+    passedPipeCount = 0;
+}
 
 export function updatePipes(delta){
     timeSinceLastPipe += delta;
 
-    if(timeSinceLastPipe < PIPE_INTERVAL){
-        timeSinceLastPipe -= timeSinceLastPipe - PIPE_INTERVAL;
+    if(timeSinceLastPipe > PIPE_INTERVAL){
+        timeSinceLastPipe -= PIPE_INTERVAL;
         createPipe();
     }
 
     pipes.forEach(pipe => {
+        if(pipe.left + PIPE_WIDTH < 0){
+            passedPipeCount++;
+
+            return pipe.remove();
+        }
+
         pipe.left = pipe.left - delta * PIPE_SPEED;
     });
+}
+
+export function getPassedPipes(){
+    return passedPipeCount;
+}
+
+export function getPipeRects(){
+    return pipes.flatMap(pipe => pipe.rects());
 }
 
 function createPipe(){
@@ -24,7 +52,6 @@ function createPipe(){
 
     pipeElem.append(topElem);
     pipeElem.append(bottomElem);
-
     pipeElem.classList.add('pipe');
     pipeElem.style.setProperty('--hole-top', randomNumberBetween(HOLE_HEIGHT* 1.5, window.innerHeight - HOLE_HEIGHT * 0.5));
 
@@ -34,6 +61,16 @@ function createPipe(){
         },
         set left(value){
             pipeElem.style.setProperty('--pipe-left', value);
+        },
+        remove(){
+            pipes = pipes.filter(p => p !== pipe );
+            pipeElem.remove()
+        },
+        rects(){
+            return [
+                topElem.getBoundingClientRect(),
+                bottomElem.getBoundingClientRect
+            ]
         }
     }
 

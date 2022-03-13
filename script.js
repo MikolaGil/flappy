@@ -1,4 +1,5 @@
 import { updateBird, setupBird, getBirdRect } from './bird.js';
+import { updatePipes, setupPipes, getPassedPipes, getPipeRects } from './pipe.js';
 
 document.addEventListener('keypress', handleStart, {once: true} );
 
@@ -12,9 +13,12 @@ function updateLoop(time){
     }
 
     const delta = time - lastTime;
-    updateBird(delta);
 
-    if(checkLose()) return handleLose()
+    updateBird(delta);
+    updatePipes(delta);
+
+    if(checkLose()) return handleLose();
+
     lastTime = time;
     window.requestAnimationFrame(updateLoop);
 }
@@ -27,6 +31,8 @@ function handleStart(){
     subTitle.classList.add("hide");
 
     setupBird();
+    setupPipes();
+
     lastTime = 0;
 
     window.requestAnimationFrame(updateLoop)
@@ -34,10 +40,20 @@ function handleStart(){
 
 function checkLose(){
     const birdRect = getBirdRect();
+    const insidePipe = getPipeRects().some(rect => isCollision(birdRect, rect));
 
     const outerWorld = birdRect.top < 0 || birdRect.bottom > window.innerHeight;
 
-    return outerWorld;
+    return outerWorld || insidePipe;
+}
+
+function isCollision(rect1, rect2){
+    return (
+        rect1.left < rect2.right &&
+        rect1.top < rect2.bottom &&
+        rect1.right > rect2.left &&
+        rect1.bottom > rect2.top
+    )
 }
 
 function handleLose(){
@@ -47,7 +63,7 @@ function handleLose(){
 
         title.classList.remove("hide");
         subTitle.classList.remove("hide");
-        subTitle.textContent= `${1} Pipes`;
+        subTitle.textContent= `${getPassedPipes()} Pipes`;
 
         document.addEventListener('keypress', handleStart, {once: true} );
     }, 100)
